@@ -18,3 +18,5 @@ python3 -m http.server 4173
 ```
 
 ブラウザで `http://localhost:4173` を開きます。
+
+Prototype v0.1
