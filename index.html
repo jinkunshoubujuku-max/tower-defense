@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07110f">
+  <title>ARCROOT // Isometric Defense</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+  <main class="game-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="ARCROOT home">
+        <span class="brand-mark">A<span>R</span></span>
+        <span><strong>ARCROOT</strong><small>ISOMETRIC DEFENSE</small></span>
+      </a>
+      <div class="run-title"><span>RUN</span> 07 <i></i> VERDANT GRID</div>
+      <nav class="resources" aria-label="Resources">
+        <div><span class="resource-icon credit">◇</span><p><small>CREDITS</small><strong id="credits">240</strong></p></div>
+        <div><span class="resource-icon energy">✦</span><p><small>ENERGY</small><strong id="energy">3</strong><em>/ 5</em></p></div>
+        <div class="core-stat"><span class="resource-icon core">♥</span><p><small>CORE</small><strong id="coreHp">20</strong><em>/ 20</em></p></div>
+      </nav>
+      <button class="icon-button" id="soundButton" aria-label="Toggle sound">◖</button>
+      <button class="icon-button" id="settingsButton" aria-label="Settings">⚙</button>
+    </header>
+
+    <section class="play-area">
+      <div class="mission-strip">
+        <div><small>SECTOR</small><strong>03 / OVERGROWTH</strong></div>
+        <div class="threat"><small>THREAT LEVEL</small><span><i></i><i></i><i></i><i></i><i></i></span><strong>RISING</strong></div>
+        <button id="helpButton">? &nbsp; HOW TO PLAY</button>
+      </div>
+
+      <div class="canvas-wrap" id="canvasWrap">
+        <canvas id="gameCanvas" aria-label="Isometric tower defense battlefield"></canvas>
+        <div class="wave-banner" id="waveBanner"><small>INCOMING</small><strong>WAVE 1</strong><span>SCOUT FORMATION</span></div>
+        <div class="toast" id="toast"></div>
+        <div class="tile-hint" id="tileHint">SELECT A BUILD NODE</div>
+        <div class="boss-bar hidden" id="bossBar"><span>WARDEN UNIT</span><div><i id="bossFill"></i></div></div>
+      </div>
+
+      <aside class="right-panel">
+        <div class="panel-head"><span>WAVE CONTROL</span><b id="waveCount">01 <small>/ 10</small></b></div>
+        <div class="next-wave">
+          <small>NEXT WAVE</small>
+          <div class="enemy-preview"><span class="enemy-glyph">⬢</span><div><strong id="enemyName">FERAL DRONES</strong><p><b id="enemyTotal">8</b> units · light armor</p></div></div>
+          <div class="wave-tags"><span>FAST</span><span>SWARM</span></div>
+        </div>
+        <button class="deploy-button" id="waveButton"><span>▶</span><div><strong>DEPLOY WAVE</strong><small>+ 15 EARLY BONUS</small></div></button>
+        <div class="wave-progress">
+          <div><span>SECTOR PROGRESS</span><b id="progressText">0 / 10</b></div>
+          <div class="progress-track"><i id="progressFill"></i></div>
+        </div>
+        <div class="speed-controls">
+          <button id="pauseButton" aria-label="Pause">Ⅱ</button><button class="active" data-speed="1">1×</button><button data-speed="2">2×</button><button data-speed="3">3×</button>
+        </div>
+
+        <div class="build-head"><span>BUILD MATRIX</span><small>SELECT A UNIT</small></div>
+        <div class="build-list" id="buildList">
+          <button class="tower-card selected" data-type="cannon">
+            <span class="tower-icon cannon-icon"><i></i></span>
+            <span><strong>CANNON</strong><small>HEAVY · SPLASH</small></span><b>90 ◇</b>
+          </button>
+          <button class="tower-card" data-type="rapid">
+            <span class="tower-icon rapid-icon"><i></i></span>
+            <span><strong>RAPID</strong><small>LIGHT · MULTI-HIT</small></span><b>65 ◇</b>
+          </button>
+          <button class="tower-card locked" data-type="support">
+            <span class="tower-icon support-icon"><i></i></span>
+            <span><strong>SUPPORT</strong><small>AMPLIFY · AURA</small></span><b>120 ◇</b>
+            <em>LOCKED · WAVE 3</em>
+          </button>
+        </div>
+      </aside>
+    </section>
+
+    <footer class="bottombar">
+      <div class="xp-block"><div><span>RUN LEVEL <b id="runLevel">1</b></span><strong id="xpText">0 / 100 XP</strong></div><div class="xp-track"><i id="xpFill"></i></div></div>
+      <button class="tree-button" id="treeButton"><span class="tree-symbol">⌘</span><span><small>BUILD SYSTEM</small><strong>SKILL MATRIX</strong></span><b id="skillPoints">1</b><em>POINT AVAILABLE</em></button>
+      <div class="stats"><div><small>ELIMINATED</small><strong id="kills">000</strong></div><div><small>BUILD RATING</small><strong id="rating">D</strong></div></div>
+    </footer>
+  </main>
+
+  <section class="modal" id="skillModal" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div class="skill-window">
+      <header><div><small>BUILD SYSTEM / RUN 07</small><h2>SKILL MATRIX</h2><p>接続されたノードを選択して、今回のビルドを構築する。</p></div><div class="point-counter"><b id="modalPoints">1</b><span>POINTS<br>AVAILABLE</span></div><button id="closeSkills" aria-label="Close">×</button></header>
+      <div class="skill-legend"><span><i class="power"></i>FIREPOWER</span><span><i class="tempo"></i>RAPID</span><span><i class="burst"></i>EXPLOSIVE</span><span><i class="volt"></i>VOLTAGE</span></div>
+      <div class="skill-grid" id="skillGrid">
+        <svg class="skill-lines" viewBox="0 0 900 440" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M450 380 L250 280 L150 160 M250 280 L350 160 M450 380 L650 280 L550 160 M650 280 L750 160"/>
+          <path class="cross" d="M350 160 L450 65 M550 160 L450 65"/>
+        </svg>
+        <button class="skill-node root owned" data-skill="core"><span>◆</span><strong>CORE LINK</strong><small>ACTIVE</small></button>
+        <button class="skill-node n1 available power" data-skill="power"><span>▲</span><strong>HEAVY LOAD</strong><small>DMG +30%</small></button>
+        <button class="skill-node n2 available tempo" data-skill="tempo"><span>»</span><strong>OVERCLOCK</strong><small>RATE +25%</small></button>
+        <button class="skill-node n3 burst" data-skill="blast"><span>✹</span><strong>DEATH BURST</strong><small>KILLS EXPLODE</small></button>
+        <button class="skill-node n4 volt" data-skill="chain"><span>ϟ</span><strong>ARC STRIKE</strong><small>EVERY 8 HITS</small></button>
+        <button class="skill-node apex" data-skill="storm"><span>✦</span><strong>CHAIN REACTION</strong><small>SYNERGY</small></button>
+      </div>
+      <footer><span>ノードにカーソルを合わせると詳細を表示</span><button id="closeSkillsBottom">RETURN TO FIELD</button></footer>
+    </div>
+  </section>
+
+  <section class="help-modal" id="helpModal" aria-hidden="true">
+    <div><button id="closeHelp">×</button><small>FIELD MANUAL</small><h2>守り、繋ぎ、増幅せよ。</h2><ol><li><b>01</b><span>右のユニットを選び、光る建設セルに配置します。</span></li><li><b>02</b><span>ウェーブを展開し、撃破報酬と経験値を獲得します。</span></li><li><b>03</b><span>スキルマトリクスで能力を掛け合わせ、連鎖を作ります。</span></li></ol></div>
+  </section>
+  <script src="game.js"></script>
+</body>
+</html>
